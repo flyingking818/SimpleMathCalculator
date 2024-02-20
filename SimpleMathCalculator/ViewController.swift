@@ -16,17 +16,50 @@ class ViewController: UIViewController {
     @IBOutlet weak var NumberTwo: UITextField!
     @IBOutlet weak var ResultMsg: UILabel!
     
+    @IBOutlet weak var DoubleFlag: UISwitch!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        // Goood use cases:
+        // 1) Database lookup
+        // 2) Populate dropdown list/radio button list/checkbox list...
+        // 3) Initialize viewing options of some UI elements.
+        
+        ResultMsg.isHidden = true
+        DoubleFlag.isOn = false
+        
     }
     
     //Put actions/methods after the viewDidLoad by convention.
     
     @IBAction func Calculate(_ sender: UIButton) {
-        let numberOne = Double(NumberOne.text!)
-        let numberTwo = Double(NumberTwo.text!)
+        //This is unsafe conversion!
+        //let numberOne = Double(NumberOne.text!)
+        //let numberTwo = Double(NumberTwo.text!)
+        ResultMsg.isHidden = false
+      
+        
+        //Let's use guard keyword to do safe conversions.
+        guard let numberOne = Double(NumberOne.text! ?? "")
+        else{
+            ResultMsg.text = "Please enter a valid number 1."
+            return
+        }
+        
+        guard let numberTwo = Double(NumberTwo.text! ?? "")
+        else{
+            ResultMsg.text = "Please enter a valid number 2."
+            return
+        }
+        
+        //Validate textbox input - did the user enter something?
+        if MathOperator.text?.isEmpty ?? true {
+            ResultMsg.text = "Please enter a valid math operator!"
+            return
+        }
+        
+        
         
         //let mathOperator = MathOperator.text!
         
@@ -35,22 +68,35 @@ class ViewController: UIViewController {
         
         //should I use let or var for the output
         
-        var total = 0.00
+        var result = 0.00
         
         switch MathOperator.text{
         case "+":
-            total = Double(numberOne! + numberTwo!)
+            result = Double(numberOne + numberTwo)
         case "-":
-            total = Double(numberOne! - numberTwo!)
+            result = Double(numberOne - numberTwo)
         case "/":
-            total = Double(numberOne! / numberTwo!)
+            result = Double(numberOne / numberTwo)
         case "*":
-            total = Double(numberOne! * numberTwo!)
+            result = Double(numberOne * numberTwo)
         default:
-            ResultMsg.text = "Wrong entry!"
+            ResultMsg.text = "Wrong operator!"
+            return
         }
         
-        ResultMsg.text = String(total)
+        
+        
+        //The double logic here
+        var doubleResult = 0.00
+        if DoubleFlag.isOn{
+            doubleResult = result * 2
+            ResultMsg.text = "The final result is \(String(result))\n" + "The double is \(String(doubleResult))."
+        }else{
+            ResultMsg.text = "The final result is \(String(result))."
+        }
+        
+       
+      
         
         
     }
